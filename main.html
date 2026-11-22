@@ -1,16 +1,116 @@
 <!DOCTYPE html>
-
-<html>
-
+<html lang="en">
 <head>
-	<link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verify Your Account</title>
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+  body {
+    background: #f4f4f4;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .container {
+    background: #fff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    text-align: center;
+    width: 420px;
+    max-width: 90%;
+  }
+  #verification_heading {
+    font-size: 26px;
+    margin-bottom: 10px;
+  }
+  #verification_subtext {
+    color: #666;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 30px;
+  }
+  .code-container {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+  .code {
+    width: 50px;
+    height: 60px;
+    font-size: 24px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+  }
+  .code:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52,152,219,0.2);
+  }
+  /* number input ke arrows hatane ke liye */
+  .code::-webkit-outer-spin-button,
+  .code::-webkit-inner-spin-button { -webkit-appearance: none; }
+</style>
 </head>
-
 <body>
-	<!-- the entire body must be written by student -->
-    <script type="text/javascript" src="./script.js">
+
+<div class="container">
+  <h2 id="verification_heading">Verify Your Account</h2>
+  <p id="verification_subtext">We emailed you the six digit code to your email address.<br>Enter the code below to confirm your email address.</p>
+
+  <div class="code-container">
+    <input type="text" inputmode="numeric" maxlength="1" class="code" placeholder="0">
+    <input type="text" inputmode="numeric" maxlength="1" class="code" placeholder="0">
+    <input type="text" inputmode="numeric" maxlength="1" class="code" placeholder="0">
+    <input type="text" inputmode="numeric" maxlength="1" class="code" placeholder="0">
+    <input type="text" inputmode="numeric" maxlength="1" class="code" placeholder="0">
+    <input type="text" inputmode="numeric" maxlength="1" class="code" placeholder="0">
+  </div>
+</div>
+
+<script>
+  const codes = document.querySelectorAll('.code');
+
+  // Pehle field pe auto-focus
+  codes[0].focus();
+
+  codes.forEach((code, idx) => {
+    // 1. Typing Forward
+    code.addEventListener('input', (e) => {
+      // Sirf digit allow karo
+      code.value = code.value.replace(/[^0-9]/g, '');
+
+      if (code.value !== '' && idx < codes.length - 1) {
+        codes[idx + 1].focus();
+      }
+    });
+
+    // 2. Backspace Behavior
+    code.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace') {
+        if (code.value !== '') {
+          // Agar current me digit hai, to usko delete karke pichle pe jao
+          code.value = '';
+          if (idx > 0) {
+            codes[idx - 1].focus();
+            // Pichle wale ka bhi value clear karna hai agar test wahi expect kare
+            // Isliye hum pichle ko focus karke uska value bhi clear nahi karenge yahan,
+            // taaki ek backspace = ek delete rahe. Neeche wala case handle karega.
+            // Lekin spec ke hisaab se last filled se delete hona chahiye,
+            // isliye agar hum last field pe hain to current clear + prev focus sahi hai.
+          }
+        } else if (idx > 0) {
+          // Agar current khali hai, to pichle pe jao aur usko delete karo
+          codes[idx - 1].focus();
+          codes[idx - 1].value = '';
+        }
+      }
+    });
+  });
 </script>
 
 </body>
-
 </html>
