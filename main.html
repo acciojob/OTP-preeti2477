@@ -50,7 +50,6 @@
     border-color: #3498db;
     box-shadow: 0 0 0 2px rgba(52,152,219,0.2);
   }
-  /* number input ke arrows hatane ke liye */
   .code::-webkit-outer-spin-button,
   .code::-webkit-inner-spin-button { -webkit-appearance: none; }
 </style>
@@ -74,38 +73,30 @@
 <script>
   const codes = document.querySelectorAll('.code');
 
-  // Pehle field pe auto-focus
   codes[0].focus();
 
   codes.forEach((code, idx) => {
-    // 1. Typing Forward
-    code.addEventListener('input', (e) => {
-      // Sirf digit allow karo
+    // Typing Forward
+    code.addEventListener('input', () => {
       code.value = code.value.replace(/[^0-9]/g, '');
-
       if (code.value !== '' && idx < codes.length - 1) {
         codes[idx + 1].focus();
       }
     });
 
-    // 2. Backspace Behavior
+    // Backspace - FIXED
     code.addEventListener('keydown', (e) => {
       if (e.key === 'Backspace') {
         if (code.value !== '') {
-          // Agar current me digit hai, to usko delete karke pichle pe jao
+          // Current me digit hai -> isi ko delete karo, focus pichle pe le jao
           code.value = '';
           if (idx > 0) {
             codes[idx - 1].focus();
-            // Pichle wale ka bhi value clear karna hai agar test wahi expect kare
-            // Isliye hum pichle ko focus karke uska value bhi clear nahi karenge yahan,
-            // taaki ek backspace = ek delete rahe. Neeche wala case handle karega.
-            // Lekin spec ke hisaab se last filled se delete hona chahiye,
-            // isliye agar hum last field pe hain to current clear + prev focus sahi hai.
           }
         } else if (idx > 0) {
-          // Agar current khali hai, to pichle pe jao aur usko delete karo
+          // Current khali hai -> sirf focus pichle pe le jao
+          // Pichle ka value yahan delete MAT karo
           codes[idx - 1].focus();
-          codes[idx - 1].value = '';
         }
       }
     });
